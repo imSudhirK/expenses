@@ -84,6 +84,17 @@ npm run deploy               # vite build + firebase deploy (hosting + rules + i
 
 The app is served at `https://<project-id>.web.app`. That domain is already authorised for Google sign-in. If you add a custom domain, add it under *Authentication → Settings → Authorized domains*.
 
+## CI/CD
+
+Every push or merge to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml). It runs the rules tests, then builds and deploys **Hosting** to the live channel. Firestore rules and indexes are not auto-deployed; run `firebase deploy --only firestore` yourself.
+
+Required repository secrets (*Settings → Secrets and variables → Actions*):
+
+| Secret | Value |
+| --- | --- |
+| `FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_C9D93` | JSON key for a service account with *Firebase Hosting Admin* and *API Keys Viewer* roles |
+| `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID` | Same values as your local `.env` |
+
 ## Free tier headroom
 
 Spark limits include 50k Firestore reads, 20k writes, and 1 GiB of storage per day, plus 10 GB/month of Hosting transfer. With 50 users, typical use stays well below these limits.
