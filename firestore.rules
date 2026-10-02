@@ -1,0 +1,69 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Signed in AND email is on the allowlist (caps the app at the users you add).
+    function isAllowed() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/allowlist/$(request.auth.token.email));
+    }
+
+    function isOwner(uid) {
+      return isAllowed() && request.auth.uid == uid;
+    }
+
+    function hasTimestamps() {
+      return request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+    }
+
+    // createdAt must never change after creation.
+    function keepsCreatedAt() {
+      return request.resource.data.createdAt == resource.data.createdAt;
+    }
+
+    function validGroup() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['name', 'createdAt', 'updatedAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 60
+        && hasTimestamps();
+    }
+
+    function validExpense(uid) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['title', 'amount', 'paidAmount', 'groupId', 'type', 'dueDate', 'createdAt', 'updatedAt'])
+        && d.title is string && d.title.size() > 0 && d.title.size() <= 100
+        && d.amount is number && d.amount >= 0
+        && d.paidAmount is number && d.paidAmount >= 0 && d.paidAmount <= d.amount
+        && d.type in ['personal', 'education', 'investment', 'others']
+        && (d.dueDate == null || d.dueDate is timestamp)
+        && d.groupId is string
+        && exists(/databases/$(database)/documents/users/$(uid)/groups/$(d.groupId))
+        && hasTimestamps();
+    }
+
+    // Users can see only their own allowlist entry (used by the UI to show "access not granted").
+    match /allowlist/{email} {
+      allow get: if request.auth != null && request.auth.token.email == email;
+      allow list, write: if false;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /groups/{groupId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid) && validGroup();
+        allow update: if isOwner(uid) && validGroup() && keepsCreatedAt();
+      }
+
+      match /expenses/{expenseId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid) && validExpense(uid);
+        allow update: if isOwner(uid) && validExpense(uid) && keepsCreatedAt();
+      }
+    }
+  }
+}
