@@ -58,9 +58,9 @@ export default function ExpensePanel({ uid, group }: { uid: string; group: Group
           <TypeLegend />
 
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 md:block">
+          <div className="hidden max-h-[max(16rem,calc(100vh-22rem))] overflow-y-auto rounded-xl bg-white ring-1 ring-slate-200 md:block">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <thead className="sticky top-0 z-[1] bg-slate-50 text-left shadow-[0_1px_0_var(--color-slate-200)] text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-4 py-3 font-medium">Expenses</th>
                   <th className="px-4 py-3 text-right font-medium">Amount</th>
@@ -86,7 +86,7 @@ export default function ExpensePanel({ uid, group }: { uid: string; group: Group
           </div>
 
           {/* Mobile cards */}
-          <ul className="space-y-2 md:hidden">
+          <ul className="max-h-[60vh] space-y-2 overflow-y-auto overscroll-contain rounded-xl md:hidden">
             {expenses.map((e) => (
               <li key={e.id} className="flex items-center gap-3 rounded-xl bg-white p-3 ring-1 ring-slate-200">
                 <div className="min-w-0 flex-1">

@@ -6,7 +6,7 @@ import BudgetsPage from './BudgetsPage'
 import DashboardPage from './DashboardPage'
 
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard', title: 'Expense Tracker' },
+  { id: 'dashboard', label: 'Expense Tracker', title: 'Dashboard' },
   { id: 'budgets', label: 'Budgets', title: 'Budgets' },
 ] as const
 type TabId = (typeof TABS)[number]['id']

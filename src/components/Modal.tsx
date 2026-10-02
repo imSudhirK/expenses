@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   useEffect(() => {
@@ -7,7 +8,8 @@ export default function Modal({ title, onClose, children }: { title: string; onC
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  return (
+  // Portal to <body> so a sticky/overflow ancestor can't trap the overlay under other content.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 sm:items-center sm:p-4" onClick={onClose}>
       <div
         role="dialog"
@@ -19,6 +21,7 @@ export default function Modal({ title, onClose, children }: { title: string; onC
         <h2 className="mb-4 text-lg font-semibold">{title}</h2>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

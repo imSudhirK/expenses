@@ -18,7 +18,7 @@ export default function GroupList({ uid, groups, selectedId, onSelect }: Props) 
   const close = () => setDialog(null)
 
   return (
-    <aside className="md:w-64 md:shrink-0">
+    <aside className="md:sticky md:top-20 md:w-64 md:shrink-0 md:self-start">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Groups</h2>
         <button className="btn-ghost px-2 py-1 text-indigo-600" onClick={() => setDialog({ kind: 'create' })}>
@@ -31,7 +31,7 @@ export default function GroupList({ uid, groups, selectedId, onSelect }: Props) 
       ) : groups.length === 0 ? (
         <p className="text-sm text-slate-400">No groups yet.</p>
       ) : (
-        <ul className="flex gap-2 overflow-x-auto pb-1 md:flex-col md:gap-1 md:overflow-visible">
+        <ul className="flex gap-2 overflow-x-auto pb-1 md:max-h-[calc(100vh-10rem)] md:flex-col md:gap-1 md:overflow-x-visible md:overflow-y-auto md:pr-1">
           {groups.map((g) => {
             const active = g.id === selectedId
             return (
