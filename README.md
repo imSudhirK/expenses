@@ -8,6 +8,7 @@ A lightweight multi-user expense tracker built with React, Vite, TypeScript and 
 - **Budgets** tab: groups and their expenses, with title, amount, paid, remaining (derived), type, and due date
 - Expense table: title coloured by type; remaining shown red when due/overdue, yellow when pending
 - Amounts are whole numbers
+- **AI Assist** chat (bottom right): paste expenses in any format, and Gemini (via Firebase AI Logic, free tier) sorts them into groups. You review a preview and confirm before anything is saved
 - Each user can only read and write their own data, enforced in `firestore.rules`
 - Access is invite-only through an email allowlist (this is how the app is capped at about 50 users)
 
@@ -18,6 +19,7 @@ firebase.json            Hosting + Firestore + emulator config
 firestore.rules          Security rules: ownership, allowlist, validation
 firestore.indexes.json   Empty: no composite indexes needed (sorting is client-side)
 src/lib/firebase.ts      Firebase init (+ emulator wiring)
+src/lib/ai.ts            AI Assist: Gemini prompt, response schema, output sanitising
 src/auth/AuthProvider    Google sign-in + allowlist check
 src/data/*.ts            Firestore CRUD + live subscriptions
 src/components/*         UI
@@ -51,7 +53,8 @@ users/{uid}/expenses/{expenseId}   { title, amount, paidAmount, groupId, type, d
    ```bash
    firebase deploy --only firestore
    ```
-7. **Invite users**: in *Firestore → Data*, create a collection named `allowlist`. Add one document per user, using their Gmail address in lowercase as the **document ID**. The document doesn't need any fields. Start by adding yourself.
+7. **Enable AI Assist**: go to *Build → AI Logic → Get started* and choose the **Gemini Developer API**. It works on the free Spark plan with no billing, and the Gemini key stays server-side with Firebase. For production, also consider enabling **App Check** for AI Logic so other sites can't use your quota.
+8. **Invite users**: in *Firestore → Data*, create a collection named `allowlist`. Add one document per user, using their Gmail address in lowercase as the **document ID**. The document doesn't need any fields. Start by adding yourself.
 
 ## Develop
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { User } from 'firebase/auth'
 import { useAuth } from '../auth/AuthProvider'
+import AiAssistant from './AiAssistant'
 import BudgetsPage from './BudgetsPage'
 import DashboardPage from './DashboardPage'
 
@@ -65,10 +66,12 @@ export default function AppShell({ user }: { user: User }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 md:py-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 pt-4 md:pt-6">
         <h1 className="mb-4 text-2xl font-semibold">{active.title}</h1>
         {tab === 'dashboard' ? <DashboardPage uid={user.uid} /> : <BudgetsPage uid={user.uid} />}
       </main>
+
+      <AiAssistant uid={user.uid} />
     </div>
   )
 }

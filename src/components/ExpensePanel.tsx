@@ -2,24 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { addExpense, deleteExpense, subscribeExpenses, updateExpense } from '../data/expenses'
 import { remainingTone, type RemainingTone } from '../lib/analytics'
 import { formatDate, formatMoney } from '../lib/format'
-import { EXPENSE_TYPES, remaining, type Expense, type ExpenseType, type Group } from '../lib/types'
+import { TYPE_DOT, TYPE_TEXT } from '../lib/typeColors'
+import { EXPENSE_TYPES, remaining, type Expense, type Group } from '../lib/types'
 import ConfirmDialog from './ConfirmDialog'
 import ExpenseForm from './ExpenseForm'
 import StatCard from './StatCard'
-
-// Expense type is shown by the colour of the title.
-const TYPE_TEXT: Record<ExpenseType, string> = {
-  personal: 'text-sky-700',
-  education: 'text-violet-700',
-  investment: 'text-emerald-700',
-  others: 'text-slate-700',
-}
-const TYPE_DOT: Record<ExpenseType, string> = {
-  personal: 'bg-sky-600',
-  education: 'bg-violet-600',
-  investment: 'bg-emerald-600',
-  others: 'bg-slate-500',
-}
 
 type Dialog = { kind: 'add' } | { kind: 'edit'; expense: Expense } | { kind: 'delete'; expense: Expense } | null
 
